@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
-
+#include <climits>
 /*
 ghazi a
 spring sem cpp/ds dc
@@ -86,7 +86,62 @@ void printAdj(int t[][10], vector<char*> vs)
   }
 }
 
+void dijkstra(int t[][10], vector<char*> vs, char* src)
+{
+  //next level laziness
+  int n = vs.size();
+  vector<int> dist(n, INT_MAX);
+  vector<bool> sptSet(n, false);
+  int srcIndex = -1;
 
+
+  for(int i = 0; i < n; i++)
+  {
+    if(strcmp(vs[i], src) == 0)
+    {
+      srcIndex = i;
+      break;
+    }
+  }
+
+  if(srcIndex == -1)
+  {
+    cout << "Source vertex?" << endl;
+    return;
+  }
+
+  dist[srcIndex] = 0;
+
+  for(int count = 0; count < n - 1; count++)
+  {
+    int min = INT_MAX, min_index;
+
+    for(int v = 0; v < n; v++)
+    {
+      if(!sptSet[v] && dist[v] <= min)
+      {
+        min = dist[v], min_index = v;
+      }
+    }
+
+    int u = min_index;
+    sptSet[u] = true;
+
+    for(int v = 0; v < n; v++)
+    {
+      if(!sptSet[v] && t[u][v] != -1 && dist[u] != INT_MAX && dist[u] + t[u][v] < dist[v])
+      {
+        dist[v] = dist[u] + t[u][v];
+      }
+    }
+  }
+
+  cout << "Vertex \t Distance from Source" << endl;
+  for(int i = 0; i < n; i++)
+  {
+    cout << vs[i] << "\t" << dist[i] << endl;
+  }
+}
 
 int main()
 {
@@ -183,59 +238,3 @@ int main()
   }
 }
 
-void dijkstra(int t[][10], vector<char*> vs, char* src)
-{
-  //next level laziness
-  int n = vs.size();
-  vector<int> dist(n, INT_MAX);
-  vector<bool> sptSet(n, false);
-  int srcIndex = -1;
-
-
-  for(int i = 0; i < n; i++)
-  {
-    if(strcmp(vs[i], src) == 0)
-    {
-      srcIndex = i;
-      break;
-    }
-  }
-
-  if(srcIndex == -1)
-  {
-    cout << "Source vertex?" << endl;
-    return;
-  }
-
-  dist[srcIndex] = 0;
-
-  for(int count = 0; count < n - 1; count++)
-  {
-    int min = INT_MAX, min_index;
-
-    for(int v = 0; v < n; v++)
-    {
-      if(!sptSet[v] && dist[v] <= min)
-      {
-        min = dist[v], min_index = v;
-      }
-    }
-
-    int u = min_index;
-    sptSet[u] = true;
-
-    for(int v = 0; v < n; v++)
-    {
-      if(!sptSet[v] && t[u][v] != -1 && dist[u] != INT_MAX && dist[u] + t[u][v] < dist[v])
-      {
-        dist[v] = dist[u] + t[u][v];
-      }
-    }
-  }
-
-  cout << "Vertex \t Distance from Source" << endl;
-  for(int i = 0; i < n; i++)
-  {
-    cout << vs[i] << "\t" << dist[i] << endl;
-  }
-}

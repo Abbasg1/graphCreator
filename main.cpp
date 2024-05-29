@@ -107,7 +107,7 @@ int main()
   int cmd;
   while(true)
   {
-    cout << "1 to add Vertex, 2 to add Edge, 3 to remove Vertex, 4 to remove Edge, 5 to Print, 6 to Quit." << endl;
+    cout << "1 to add Vertex, 2 to add Edge, 3 to remove Vertex, 4 to remove Edge, 5 to Print, 6 to find Shortest path 7 to Quit." << endl;
     cin >> cmd;
     cin.get();
 
@@ -165,6 +165,14 @@ int main()
       printAdj(adjTable, Vertices);
     }
     else if(cmd==6)
+    {//djiokstras algorithm imp,ementation
+      char* sourceVertex = new char[1];
+      cout << "Enter a source vertex";
+      cin>> sourceVertex;
+      cin.get();
+      dijkstra(adjTable, Vertices, sourceVertex);
+    }
+    else if(cmd==7)
     {//quit
       break;
     }
@@ -172,5 +180,62 @@ int main()
     {
       cout << "invalid command" << endl;
     }
+  }
+}
+
+void dijkstra(int t[][10], vector<char*> vs, char* src)
+{
+  //next level laziness
+  int n = vs.size();
+  vector<int> dist(n, INT_MAX);
+  vector<bool> sptSet(n, false);
+  int srcIndex = -1;
+
+
+  for(int i = 0; i < n; i++)
+  {
+    if(strcmp(vs[i], src) == 0)
+    {
+      srcIndex = i;
+      break;
+    }
+  }
+
+  if(srcIndex == -1)
+  {
+    cout << "Source vertex?" << endl;
+    return;
+  }
+
+  dist[srcIndex] = 0;
+
+  for(int count = 0; count < n - 1; count++)
+  {
+    int min = INT_MAX, min_index;
+
+    for(int v = 0; v < n; v++)
+    {
+      if(!sptSet[v] && dist[v] <= min)
+      {
+        min = dist[v], min_index = v;
+      }
+    }
+
+    int u = min_index;
+    sptSet[u] = true;
+
+    for(int v = 0; v < n; v++)
+    {
+      if(!sptSet[v] && t[u][v] != -1 && dist[u] != INT_MAX && dist[u] + t[u][v] < dist[v])
+      {
+        dist[v] = dist[u] + t[u][v];
+      }
+    }
+  }
+
+  cout << "Vertex \t Distance from Source" << endl;
+  for(int i = 0; i < n; i++)
+  {
+    cout << vs[i] << "\t" << dist[i] << endl;
   }
 }
